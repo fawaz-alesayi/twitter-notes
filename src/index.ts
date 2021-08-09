@@ -6,7 +6,7 @@ let server = fastify({
 })
 
 server.get("/", (req, rep) => {
-  rep.send(req.headers);
+  rep.send("Hello!");
 })
 
 const start = async () => {
