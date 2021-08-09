@@ -23,6 +23,7 @@
     "ts-node": "^10.1.0"
   },
   "dependencies": {
+    "dotenv": "^10.0.0",
     "fastify": "^3.20.1",
     "twitter-lite": "^1.1.0",
     "xstate": "^4.23.1"
