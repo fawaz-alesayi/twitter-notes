@@ -1,5 +1,5 @@
 import Twitter from "twitter-lite";
-import { getEnv } from "../utils/getEnv";
+import { getEnv } from "../../utils/getEnv";
 export const client = new Twitter({
   subdomain: "api", // "api" is the default (change for other subdomains)
   version: "2", // version "1.1" is the default (change for other subdomains)
