@@ -10,34 +10,31 @@ declare module "fastify" {
   interface FastifyReply {}
 }
 
-// define options
-export interface MyPluginOptions {
+export interface routeOptions {
   prefix: string;
 }
 
-interface CrcRequestParams {
-  crc_token: string;
-}
-
-const twitterWebHooks: FastifyPluginAsync<MyPluginOptions> = async (
+const twitterWebHooks: FastifyPluginAsync<routeOptions> = async (
   fastify,
   options
 ) => {
   const { prefix } = options;
   fastify.register(
     async function (fastify) {
-      fastify.get<{ Params: FromSchema<typeof challengeRequestSchema> }>(
+      fastify.get<{ Querystring: FromSchema<typeof challengeRequestSchema> }>(
         "/twitter",
         { schema: challengeSchema },
         async (request, reply) => {
+          
           let challengeSolution = getChallengeResponse(
-            request.params.crc_token,
+            request.query.crc_token,
             getEnv("CONSUMER_SECRET")
           );
+          console.log(challengeSolution);
           const response = {
             response_token: `sha256=${challengeSolution}`,
           };
-          return reply.status(200).send(response);
+          return reply.code(200).send(response);
         }
       );
     },
@@ -54,7 +51,7 @@ const challengeRequestSchema = {
 } as const;
 
 const challengeResponseSchema = {
-  "200": {
+  200: {
     type: "object",
     properties: {
       response_token: { type: "string" },
@@ -63,9 +60,8 @@ const challengeResponseSchema = {
 } as const;
 
 const challengeSchema = {
-  params: challengeRequestSchema,
+  query: challengeRequestSchema,
   response: challengeResponseSchema,
-  required: ["params", "response"],
 };
 
 export default fp(twitterWebHooks, "3.x");
