@@ -10,11 +10,13 @@ server.register(twitterWebHooks, {
   prefix: "/webhook",
 });
 
-server.get("/hello", async (req, res) => {});
+server.get("/health", async (req, rep) => {
+  rep.code(200).send("all is good!");
+});
 
 const start = async () => {
   try {
-    await server.listen(getEnv("PORT"), getEnv("SOCKET_ADDR"));
+    await server.listen(getEnv('PORT'), getEnv('SOCKET_ADDR'));
   } catch (err) {
     server.log.error(err);
     process.exit(1);
