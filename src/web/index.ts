@@ -10,6 +10,11 @@ server.register(twitterWebHooks, {
   prefix: "/webhook",
 });
 
+
+server.get("/", async (req, rep) => {
+  rep.code(200).send();
+})
+
 server.get("/health", async (req, rep) => {
   rep.code(200).send("all is good!");
 });
