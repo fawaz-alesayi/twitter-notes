@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
-import { getChallengeResponse } from "../../utils/challengeResponse";
-import { getEnv } from "../../utils/getEnv";
+import { getChallengeResponse } from "@utils/challengeResponse";
+import { getEnv } from "@utils/getEnv";
 import { FromSchema } from "json-schema-to-ts";
 
 // using declaration merging, add your plugin props to the appropriate fastify interfaces
