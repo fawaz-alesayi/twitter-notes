@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 export function getEnv(variable: string): string {
-    let env = process.env[variable];
+    const env = process.env[variable];
     if (env != undefined) {
         return env;
     } else {

@@ -1,22 +1,29 @@
 import { createModel } from "xstate/lib/model";
 import { assign, interpret, createMachine } from "xstate";
-import { client } from "@src/twitter/client";
+import { appClient, botClient } from "@src/twitter/client";
 import { getEnv } from "@utils/getEnv";
 import { ErrorPlatformEvent } from "xstate";
 
 async function startObserving(user: string) {
   try {
-    let reply = await client.post(
+    let reply = await botClient.post(
       `account_activity/all/${getEnv("TWITTER_ENV")}/webhooks`,
       {
         url: `${getEnv("TWITTER_WEBHOOK_CALLBACK_URL")}/webhook/twitter`,
       }
     );
     console.log(reply);
+
+      
   } catch (e) {
     console.error(e);
     throw e;
   }
+}
+
+// returns true if we have an account actvity subscription
+async function checkObserving(user: string) {
+  return false;
 }
 
 let userObserverModel = createModel(
@@ -25,6 +32,9 @@ let userObserverModel = createModel(
     error: "" as string,
     startObserving: async (user: string) => {
       return await startObserving(user);
+    },
+    checkObserving: async (user: string) => {
+      return await checkObserving(user);
     },
   },
   {
@@ -66,6 +76,17 @@ export const observerMachine = userObserverModel.createMachine({
           actions: userObserverModel.assign({
             user: (_, event) => event.user,
           }),
+        },
+      },
+    },
+    checkObserving: {
+      invoke: {
+        src: async (context, _) => await context.checkObserving(context.user),
+        onDone: {
+          target: "observing",
+        },
+        onError: {
+          target: "error",
         },
       },
     },

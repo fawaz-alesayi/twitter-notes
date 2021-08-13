@@ -1,4 +1,4 @@
-import { FastifyPluginAsync } from "fastify";
+import { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import fp from "fastify-plugin";
 import { getChallengeResponse } from "@utils/challengeResponse";
 import { getEnv } from "@utils/getEnv";
@@ -21,22 +21,9 @@ const twitterWebHooks: FastifyPluginAsync<routeOptions> = async (
   const { prefix } = options;
   fastify.register(
     async function (fastify) {
-      fastify.get<{ Querystring: FromSchema<typeof challengeRequestSchema> }>(
-        "/twitter",
-        { schema: challengeSchema },
-        async (request, reply) => {
-          
-          let challengeSolution = getChallengeResponse(
-            request.query.crc_token,
-            getEnv("CONSUMER_SECRET")
-          );
-          console.log(challengeSolution);
-          const response = {
-            response_token: `sha256=${challengeSolution}`,
-          };
-          return reply.code(200).send(response);
-        }
-      );
+      fastify.get("/twitter", { schema: challengeSchema }, handleChallenge);
+
+      fastify.post("/twitter", onAccountActivity);
     },
     { prefix }
   );
@@ -65,3 +52,24 @@ const challengeSchema = {
 };
 
 export default fp(twitterWebHooks, "3.x");
+
+const onAccountActivity = async (req: FastifyRequest, rep: FastifyReply) => {
+  console.info(req)
+  rep.code(200).send();
+}
+
+const handleChallenge = async (
+  request: FastifyRequest<{
+    Querystring: FromSchema<typeof challengeRequestSchema>;
+  }>,
+  reply: FastifyReply
+) => {
+  const challengeSolution = getChallengeResponse(
+    request.query.crc_token,
+    getEnv("CONSUMER_SECRET")
+  );
+  console.log(challengeSolution);
+  reply.code(200).send({
+    response_token: `sha256=${challengeSolution}`,
+  });
+};

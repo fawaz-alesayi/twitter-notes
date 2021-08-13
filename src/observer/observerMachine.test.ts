@@ -6,9 +6,10 @@ describe("Given an newly created observer AND a user", () => {
     const user = "fawaztsa";
     it("should eventually observe the user", (done) => {
       const mockObserverMachine = observerMachine.withContext({
-        startObserving: async (user: string) => user,
+        startObserving: async (user: string) => {},
         user,
         error: "",
+        checkObserving: async () => false
       })
       
       const observer = interpret(mockObserverMachine).onTransition((state) => {

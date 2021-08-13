@@ -1,11 +1,17 @@
 import { createModel } from "xstate/lib/model";
 import { interpret, createMachine, assign } from "xstate";
-import { client, clientV2 } from "../twitter/client";
+import { botClient, clientV2 } from "../twitter/client";
 
 export interface DirectMessage {
   text: string;
   user: string;
 }
+
+/**
+ * The bot manages one twitter account
+ * it parses incoming DM's and executes side-effects accordingly
+ * it can send a message, save Direct Messages to a database, and subscribe users to services.
+ */
 
 let botModel = createModel(
   {
