@@ -21,10 +21,10 @@ const observerPlugin: FastifyPluginAsync<routeOptions> = async (fastify, options
           const twitterHandle = request.body.user;
 
           observer.onTransition((state) => {
-            console.log(state);
             if (state.matches("error")) {
+              console.log(state.value);
               const rep = {
-                message: `${state.context.error}`,
+                message: `Could not observer user: ${twitterHandle}`,
               };
               reply.code(HttpStatusCode.BAD_REQUEST).send(rep);
             } else if (state.matches("observing")) {

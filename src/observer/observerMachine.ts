@@ -6,13 +6,12 @@ import { ErrorPlatformEvent } from "xstate";
 
 async function startObserving(user: string) {
   let reply = await client.post(
-    `account_activity/all/${getEnv("TWITTER_ENV")}/webhooks.json`,
+    `account_activity/all/${getEnv("TWITTER_ENV")}/webhooks`,
     {
       url: `${getEnv("TWITTER_WEBHOOK_CALLBACK_URL")}/webhook/twitter`,
     }
   );
   console.log(reply);
-  return reply;
 }
 
 let userObserverModel = createModel(
