@@ -5,20 +5,27 @@ import { getEnv } from "@utils/getEnv";
 import { ErrorPlatformEvent } from "xstate";
 
 async function startObserving(user: string) {
-  let reply = await client.post(
-    `account_activity/all/${getEnv("TWITTER_ENV")}/webhooks`,
-    {
-      url: `${getEnv("TWITTER_WEBHOOK_CALLBACK_URL")}/webhook/twitter`,
-    }
-  );
-  console.log(reply);
+  try {
+    let reply = await client.post(
+      `account_activity/all/${getEnv("TWITTER_ENV")}/webhooks`,
+      {
+        url: `${getEnv("TWITTER_WEBHOOK_CALLBACK_URL")}/webhook/twitter`,
+      }
+    );
+    console.log(reply);
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
 }
 
 let userObserverModel = createModel(
   {
     user: "" as string,
     error: "" as string,
-    startObserving: async (user: string) => { return await startObserving(user) }
+    startObserving: async (user: string) => {
+      return await startObserving(user);
+    },
   },
   {
     events: {
@@ -35,8 +42,8 @@ const observingFollowingMachine = createMachine({
     observingUser: {},
     stopped: {},
     failed: {},
-  }
-})
+  },
+});
 
 const observingDirectMessagesMachine = createMachine({
   id: "observingDirectMessages",
@@ -44,11 +51,9 @@ const observingDirectMessagesMachine = createMachine({
     user: "",
   },
   states: {
-    observingUserDirectMessages: {
-
-    },
+    observingUserDirectMessages: {},
   },
-})
+});
 
 export const observerMachine = userObserverModel.createMachine({
   context: userObserverModel.initialContext,
@@ -59,8 +64,8 @@ export const observerMachine = userObserverModel.createMachine({
         OBSERVE_FOLLOWING: {
           target: "initiateObserving",
           actions: userObserverModel.assign({
-            user: (_, event) => event.user
-          })
+            user: (_, event) => event.user,
+          }),
         },
       },
     },
