@@ -10,6 +10,7 @@ specifiers:
   json-schema-to-ts: ^1.6.4
   ts-jest: ^27.0.4
   ts-node: ^10.2.0
+  tsconfig-paths: ^3.10.1
   twitter-lite: ^1.1.0
   typescript: ^4.3.5
   xstate: ^4.23.1
@@ -28,6 +29,7 @@ devDependencies:
   json-schema-to-ts: 1.6.4
   ts-jest: 27.0.4_52cc4273aa16028085013af47e479e10
   ts-node: 10.2.0_dea0625f6d31b223e93dc3dc354b8b43
+  tsconfig-paths: 3.10.1
   typescript: 4.3.5
 
 packages:
@@ -2739,6 +2741,11 @@ packages:
       ansi-regex: 5.0.0
     dev: true
 
+  /strip-bom/3.0.0:
+    resolution: {integrity: sha1-IzTBjpx1n3vdVv3vfprj1YjmjtM=}
+    engines: {node: '>=4'}
+    dev: true
+
   /strip-bom/4.0.0:
     resolution: {integrity: sha512-3xurFv5tEgii33Zi8Jtp55wEIILR9eh34FAW00PZf+JnSsTmV/ioewSgQl97JHvgjoRGwPShsWm+IdrxB35d0w==}
     engines: {node: '>=8'}
@@ -2906,6 +2913,14 @@ packages:
 
   /ts-toolbelt/6.15.5:
     resolution: {integrity: sha512-FZIXf1ksVyLcfr7M317jbB67XFJhOO1YqdTcuGaq9q5jLUoTikukZ+98TPjKiP2jC5CgmYdWWYs0s2nLSU0/1A==}
+    dev: true
+
+  /tsconfig-paths/3.10.1:
+    resolution: {integrity: sha512-rETidPDgCpltxF7MjBZlAFPUHv5aHH2MymyPvh+vEyWAED4Eb/WeMbsnD/JDr4OKPOA1TssDHgIcpTN5Kh0p6Q==}
+    dependencies:
+      json5: 2.2.0
+      minimist: 1.2.5
+      strip-bom: 3.0.0
     dev: true
 
   /twitter-lite/1.1.0:

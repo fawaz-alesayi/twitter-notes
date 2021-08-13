@@ -2,7 +2,7 @@ import { interpret } from "xstate";
 import fastify from "fastify";
 import { observerMachine } from "@src/observer/observerMachine";
 import { default as twitterWebHooks } from "@src/twitter/webhooks/route";
-import { getEnv } from "../utils/getEnv";
+import { getEnv } from "@utils/getEnv";
 import { default as observer } from "@src/observer/endpoint"
 
 const observingList: string[] = []
