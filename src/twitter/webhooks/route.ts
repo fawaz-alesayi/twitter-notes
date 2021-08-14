@@ -3,6 +3,7 @@ import fp from "fastify-plugin";
 import { getChallengeResponse } from "@utils/challengeResponse";
 import { getEnv } from "@utils/getEnv";
 import { FromSchema } from "json-schema-to-ts";
+import { onAccountActivity } from '@src/bot/endpoint'
 
 // using declaration merging, add your plugin props to the appropriate fastify interfaces
 declare module "fastify" {
@@ -52,11 +53,6 @@ const challengeSchema = {
 };
 
 export default fp(twitterWebHooks, "3.x");
-
-const onAccountActivity = async (req: FastifyRequest, rep: FastifyReply) => {
-  console.info(req)
-  rep.code(200).send();
-}
 
 const handleChallenge = async (
   request: FastifyRequest<{

@@ -1,8 +1,9 @@
 import { createModel } from "xstate/lib/model";
 import { assign, interpret, createMachine } from "xstate";
-import { appClient, botClient } from "@src/twitter/client";
+import { botClient, createUserClient } from "@src/twitter/client";
 import { getEnv } from "@utils/getEnv";
 import { ErrorPlatformEvent } from "xstate";
+import HttpStatusCode from "@src/utils/HttpStatusCodes";
 
 async function startObserving(user: string) {
   try {
@@ -13,16 +14,22 @@ async function startObserving(user: string) {
       }
     );
     console.log(reply);
-
-      
   } catch (e) {
     console.error(e);
     throw e;
   }
 }
 
-// returns true if we have an account actvity subscription
-async function checkObserving(user: string) {
+/**
+ * checks if the user followings are being observed
+ * @param user a twitter handle to the user
+ */
+async function isObserving(user: string) {
+  const client = createUserClient(user);
+  const reply = await client.get<Response>(
+    `account_activity/all/${getEnv("TWITTER_ENV")}/subscriptions`
+  );
+  if (reply.status === HttpStatusCode.NO_CONTENT) return true;
   return false;
 }
 
@@ -34,7 +41,7 @@ let userObserverModel = createModel(
       return await startObserving(user);
     },
     checkObserving: async (user: string) => {
-      return await checkObserving(user);
+      return await isObserving(user);
     },
   },
   {
@@ -112,7 +119,7 @@ export const observerMachine = userObserverModel.createMachine({
     error: {
       on: {
         RETRY: {
-          target: "initiateObserving",
+          target: "checkObserving",
         },
       },
     },
