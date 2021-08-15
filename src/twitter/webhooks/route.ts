@@ -3,7 +3,7 @@ import fp from "fastify-plugin";
 import { getChallengeResponse } from "@utils/challengeResponse";
 import { getEnv } from "@utils/getEnv";
 import { FromSchema } from "json-schema-to-ts";
-import { onAccountActivity } from '@src/bot/endpoint'
+import { onFollow } from '@src/bot/endpoint'
 import { accountActivitySchema } from "@src/bot/schema";
 
 // using declaration merging, add your plugin props to the appropriate fastify interfaces
@@ -25,7 +25,7 @@ const twitterWebHooks: FastifyPluginAsync<routeOptions> = async (
     async function (fastify) {
       fastify.get("/twitter", { schema: challengeSchema }, handleChallenge);
 
-      fastify.post("/twitter", { schema: accountActivitySchema }, onAccountActivity);
+      fastify.post("/twitter", { schema: accountActivitySchema }, onFollow);
     },
     { prefix }
   );

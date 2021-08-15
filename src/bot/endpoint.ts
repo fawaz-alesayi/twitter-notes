@@ -3,15 +3,19 @@ import { FastifyEndpoint } from "@src/utils/fastifyEndpoint";
 import HttpStatusCode from "@src/utils/HttpStatusCodes";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { FromSchema } from "json-schema-to-ts";
-import { bot } from "./botMachine";
+import { botMachine } from "./botMachine";
 import { accountActivityRequestSchema } from "./schema";
-export const onAccountActivity = async (
+import { interpret } from "xstate";
+
+export const onFollow = async (
   req: FastifyRequest<{
     Body: FromSchema<typeof accountActivityRequestSchema>;
   }>,
   rep: FastifyReply
 ) => {
   req.log.info("Recieved a follow")
+
+  const bot = interpret(botMachine);
 
   bot.onTransition((state) => {
     console.info(state.value)
@@ -21,11 +25,12 @@ export const onAccountActivity = async (
 
   const userId = req.body.for_user_id;
 
-  bot.start();
+  bot.start()
   bot.send({type: 'OUTGOING_DIRECT_MESSAGE', message: {
     text: "Hello, I noticed you followed someone, put a note on why you followed them for future reference! \
     You can ignore this message if you don't want to do that",
-    userId
+    fromUserId: userId,
+    toUserId: userId,
   }
   })
 };

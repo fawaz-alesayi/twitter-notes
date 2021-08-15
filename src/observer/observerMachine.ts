@@ -71,7 +71,10 @@ const observingDirectMessagesMachine = createMachine({
     observingUserDirectMessages: {},
   },
 });
-
+/**
+ * Observes the user's following and interactions with other users.
+ * Has the same lifetime as the NodeJS process.
+ */
 export const observerMachine = userObserverModel.createMachine({
   context: userObserverModel.initialContext,
   initial: "idle",
