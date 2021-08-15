@@ -1,10 +1,10 @@
 import { createModel } from "xstate/lib/model";
 import { interpret, createMachine, assign } from "xstate";
-import { botClient, clientV2 } from "../twitter/client";
+import { botClient } from "../twitter/client";
 
 export interface DirectMessage {
   text: string;
-  user: string;
+  userId: string;
 }
 
 /**
@@ -17,7 +17,7 @@ let botModel = createModel(
   {
     outgoingDirectMessage: {} as DirectMessage,
     incomingDirectMessage: {} as DirectMessage,
-    parseDirectMessage: parseDirectMessage,
+    generateReply: generateReply,
     sendDirectMessage: sendDirectMessage,
   },
   {
@@ -48,8 +48,9 @@ const messageMachine = messageModel.createMachine({
           target: "done",
         },
         onError: {
-          target: "error",
           // log failure here.
+          target: "error",
+          
         },
       },
     },
@@ -80,7 +81,7 @@ export const botMachine = botModel.createMachine({
       entry: (_context) =>
         botModel.assign({
           outgoingDirectMessage: (context, _) =>
-            context.parseDirectMessage(context.incomingDirectMessage),
+            context.generateReply(context.incomingDirectMessage),
         }),
       always: {
         target: "replying",
@@ -115,15 +116,15 @@ export const botMachine = botModel.createMachine({
   },
 });
 
-function parseDirectMessage(message: DirectMessage) {
+function generateReply(message: DirectMessage) {
   console.log(message);
   return message;
 }
 
 async function sendDirectMessage(message: DirectMessage) {
-  await clientV2.post("direct_messages/new", {
+  await botClient.post("direct_messages/new", {
     text: message.text,
-    user_id: message.user,
+    user_id: message.userId,
   });
 }
 

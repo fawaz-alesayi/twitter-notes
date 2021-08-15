@@ -9,7 +9,7 @@ describe("Given an newly created observer AND a user", () => {
         startObserving: async (user: string) => {},
         user,
         error: "",
-        checkObserving: async () => false
+        isObserving: async () => false
       })
       
       const observer = interpret(mockObserverMachine).onTransition((state) => {

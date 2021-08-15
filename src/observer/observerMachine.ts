@@ -40,7 +40,7 @@ let userObserverModel = createModel(
     startObserving: async (user: string) => {
       return await startObserving(user);
     },
-    checkObserving: async (user: string) => {
+    isObserving: async (user: string) => {
       return await isObserving(user);
     },
   },
@@ -88,7 +88,7 @@ export const observerMachine = userObserverModel.createMachine({
     },
     checkObserving: {
       invoke: {
-        src: async (context, _) => await context.checkObserving(context.user),
+        src: async (context, _) => await context.isObserving(context.user),
         onDone: {
           target: "observing",
         },

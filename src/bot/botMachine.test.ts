@@ -3,18 +3,18 @@ import { botMachine, DirectMessage } from "./botMachine";
 import { interpret } from "xstate";
 describe("Given a bot in the 'listeningForDirectMessages' state", () => {
   describe("When I send it an 'INCOMING_DIRECT_MESSAGE' event", () => {
-    let myMessage: DirectMessage = { text: "hello", user: "fawaztsa" };
+    let myMessage: DirectMessage = { text: "hello", userId: "fawaztsa" };
     it("should eventually reach the 'finish' state", (done) => {
       const mockBotMachine = botMachine.withContext({
         incomingDirectMessage: {
           text: "",
-          user: "",
+          userId: "",
         },
         outgoingDirectMessage: {
           text: "",
-          user: "",
+          userId: "",
         },
-        parseDirectMessage: (message: DirectMessage) => {
+        generateReply: (message: DirectMessage) => {
           return message;
         },
         sendDirectMessage: (message: DirectMessage) => {
@@ -28,7 +28,7 @@ describe("Given a bot in the 'listeningForDirectMessages' state", () => {
         }
       });
 
-      bot.start();
+      bot.start('replying');
 
       bot.send({ type: "INCOMING_DIRECT_MESSAGE", message: myMessage });
     });

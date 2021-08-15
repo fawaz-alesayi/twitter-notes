@@ -26,4 +26,9 @@ export const accountActivityRequestSchema = {
       },
     },
   },
+  required: ["for_user_id", "follow_events"],
 } as const;
+
+export const accountActivitySchema = {
+  body: accountActivityRequestSchema
+}
