@@ -32,7 +32,6 @@ let messageModel = createModel({
   },
 });
 
-
 /**
  * This state machine handles sending a message to a user and logging all events that come through it.
  */
@@ -64,12 +63,11 @@ const messageMachine = messageModel.createMachine({
   },
 });
 
-
 /**
  * The bot manages one Twitter account
  * it parses incoming DM's and executes side-effects accordingly.
  * it can send a message, save Direct Messages to a database, and subscribe users to services.
- * 
+ *
  * This state machine only lives for the duration of the HTTP request and response cycle.
  * In other words, a new botMachine is created for each incoming HTTP request.
  */
@@ -90,12 +88,10 @@ export const botMachine = botModel.createMachine({
             outgoingDirectMessage: (_, event) => event.message,
           }),
           target: "sendingDirectMessage",
-        }
+        },
       },
     },
-    parseDirectMessage: {
-      
-    },
+    parseDirectMessage: {},
     generatingReply: {
       entry: (_context) =>
         botModel.assign({
@@ -142,11 +138,17 @@ function generateReply(message: DirectMessage) {
 }
 
 async function sendTwitterDirectMessage(message: DirectMessage) {
-  await botClient.post("direct_messages/events/new", {
-    type: "message_create",
-    "message_create.target.recipient_id": message.toUserId,
-    "message_create.message_data": {
-      text: message.text,
+  await botClient.post<object>("direct_messages/events/new", {
+    event: {
+      type: "message_create",
+      message_create: {
+        target: {
+          recipient_id: message.toUserId,
+        },
+        message_data: {
+          text: message.text,
+        },
+      },
     },
   });
 }

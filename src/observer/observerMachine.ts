@@ -5,6 +5,10 @@ import { getEnv } from "@utils/getEnv";
 import { ErrorPlatformEvent } from "xstate";
 import HttpStatusCode from "@src/utils/HttpStatusCodes";
 
+export let observingList: string[] = [
+  '806117763328708609'
+]
+
 async function startObserving(user: string) {
   try {
     let reply = await botClient.post(
