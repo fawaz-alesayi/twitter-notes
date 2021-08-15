@@ -45,6 +45,7 @@ export const onFollow = async (
       toUserId: followEvent[0].source.id_str,
     },
   });
+  await rep
 };
 
 async function getUserIdFromUsername(username: string) {

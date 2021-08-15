@@ -53,6 +53,7 @@ const handleObserve = async (
     type: "OBSERVE_FOLLOWING",
     user: twitterHandle,
   });
+  await reply
 };
 
 export default fp(observerPlugin, "3.x");
