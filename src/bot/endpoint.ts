@@ -17,13 +17,14 @@ export const onFollow = async (
   req.log.info("Recieved a follow");
 
   const followEvents = req.body.follow_events as {
-    source: { id_str: string };
+    source: { id: string };
+    target: { screen_name: string };
   }[];
 
   req.log.info(req.body);
 
   for (const followEvent of followEvents) {
-    if (!observingList.includes(followEvent.source.id_str)) {
+    if (!observingList.includes(followEvent.source.id)) {
       console.log('Error. Trying to receive events for a user that we don\'t observe');
       rep.code(HttpStatusCode.BAD_REQUEST).send()
       return
@@ -43,10 +44,10 @@ export const onFollow = async (
   bot.send({
     type: "OUTGOING_DIRECT_MESSAGE",
     message: {
-      text: "Hello, I noticed you followed someone, put a note on why you followed them for future reference! \
-    You can ignore this message if you don't want to do that",
-      fromUserId: followEvents[0].source.id_str,
-      toUserId: followEvents[0].source.id_str,
+      text: `Hello, I noticed you followed ${followEvents[0].target.screen_name}, put a note on why you followed them for future reference! \
+    You can ignore this message if you don't want to do that`,
+      fromUserId: followEvents[0].source.id,
+      toUserId: followEvents[0].source.id,
     },
   });
   return rep
