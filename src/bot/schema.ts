@@ -4,25 +4,28 @@ export const accountActivityRequestSchema = {
     for_user_id: { type: "string" },
     follow_events: {
       type: "array",
-      properties: {
-        type: { const: "follow" },
-        created_timestamp: { type: "string" },
-        target: {
-          type: "object",
-          properties: {
-            id_str: { type: "string" },
-            screen_name: { type: "string" },
-            name: { type: "string" },
+      items: {
+        properties: {
+          type: { const: "follow" },
+          created_timestamp: { type: "string" },
+          target: {
+            type: "object",
+            properties: {
+              id_str: { type: "string" },
+              screen_name: { type: "string" },
+              name: { type: "string" },
+            },
+          },
+          source: {
+            type: "object",
+            properties: {
+              id_str: { type: "string" },
+              screen_name: { type: "string" },
+              name: { type: "string" },
+            },
           },
         },
-        source: {
-          type: "object",
-          properties: {
-            id_str: { type: "string" },
-            screen_name: { type: "string" },
-            name: { type: "string" },
-          },
-        },
+        required: ["type", "created_timestamp", "target", "source"],
       },
     },
   },
@@ -30,5 +33,5 @@ export const accountActivityRequestSchema = {
 } as const;
 
 export const accountActivitySchema = {
-  body: accountActivityRequestSchema
-}
+  body: accountActivityRequestSchema,
+};
