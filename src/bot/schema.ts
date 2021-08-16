@@ -5,7 +5,7 @@ export const accountActivityRequestSchema = {
     follow_events: {
       type: "array",
       properties: {
-        "type": { const: "follow" },
+        type: { const: "follow" },
         created_timestamp: { type: "string" },
         target: {
           type: "object",
@@ -23,7 +23,6 @@ export const accountActivityRequestSchema = {
             name: { type: "string" },
           },
         },
-        required: ["type"]
       },
     },
   },
