@@ -5,7 +5,7 @@ export const accountActivityRequestSchema = {
     follow_events: {
       type: "array",
       properties: {
-        "^type$": { type: "string", const: "follow" },
+        "type": { type: "string", const: "follow" },
         created_timestamp: { type: "string" },
         target: {
           type: "object",
