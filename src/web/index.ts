@@ -21,6 +21,16 @@ server.get("/", async (req, rep) => {
   rep.code(200).send();
 });
 
+server.get('/test', async (req, rep) => {
+  // What would happen if we don't return anything?
+  setTimeout(async () => {
+    return {
+      msg: "Hello!"
+    }
+  }, 1000);
+  await rep
+})
+
 const start = async () => {
   try {
     await server.listen(getEnv("PORT"), getEnv("SOCKET_ADDR"));

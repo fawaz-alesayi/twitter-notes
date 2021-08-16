@@ -120,11 +120,7 @@ export const botMachine = botModel.createMachine({
       },
     },
     error: {
-      on: {
-        RETRY_DIRECT_MESSAGE: {
-          target: "sendingDirectMessage",
-        },
-      },
+      type: "final",
     },
     finish: {
       type: "final",

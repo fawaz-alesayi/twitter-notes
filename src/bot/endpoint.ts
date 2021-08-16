@@ -16,21 +16,25 @@ export const onFollow = async (
 ) => {
   req.log.info("Recieved a follow");
 
-  const followEvent = req.body.follow_events as {
+  const followEvents = req.body.follow_events as {
     source: { id_str: string };
   }[];
 
-  followEvent.forEach((followEvent) => {
+  req.log.info(req.body);
+
+  for (const followEvent of followEvents) {
     if (!observingList.includes(followEvent.source.id_str)) {
+      console.log('Error. Trying to receive events for a user that we don\'t observe');
       rep.code(HttpStatusCode.BAD_REQUEST).send()
+      return
     }
-  });
+  }
 
   const bot = interpret(botMachine);
 
-  bot.onTransition((state) => {
-    console.info(state.value);
-    if (state.matches("finish")) rep.code(HttpStatusCode.OK).send();
+  bot.onTransition(state => {
+    console.info(state);
+    if (state.matches("finish")) rep.code(HttpStatusCode.NO_CONTENT).send();
     else if (state.matches("error"))
       rep.code(HttpStatusCode.BAD_REQUEST).send();
   });
@@ -41,11 +45,11 @@ export const onFollow = async (
     message: {
       text: "Hello, I noticed you followed someone, put a note on why you followed them for future reference! \
     You can ignore this message if you don't want to do that",
-      fromUserId: followEvent[0].source.id_str,
-      toUserId: followEvent[0].source.id_str,
+      fromUserId: followEvents[0].source.id_str,
+      toUserId: followEvents[0].source.id_str,
     },
   });
-  await rep
+  return rep
 };
 
 async function getUserIdFromUsername(username: string) {
