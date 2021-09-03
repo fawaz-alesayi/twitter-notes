@@ -23,17 +23,19 @@ export const onFollow = async (
 
   req.log.info(req.body);
 
-  for (const followEvent of followEvents) {
+  followEvents.forEach((followEvent) => {
     if (!observingList.includes(followEvent.source.id)) {
-      console.log('Error. Trying to receive events for a user that we don\'t observe');
-      rep.code(HttpStatusCode.BAD_REQUEST).send()
-      return
+      console.log(
+        "Error. Trying to receive events for a user that we don't observe"
+      );
+      rep.code(HttpStatusCode.BAD_REQUEST).send();
+      return;
     }
-  }
+  });
 
   const bot = interpret(botMachine);
 
-  bot.onTransition(state => {
+  bot.onTransition((state) => {
     console.info(state.value);
     if (state.matches("finish")) rep.code(HttpStatusCode.NO_CONTENT).send();
     else if (state.matches("error"))
@@ -50,7 +52,7 @@ export const onFollow = async (
       toUserId: followEvents[0].source.id,
     },
   });
-  return rep
+  return rep;
 };
 
 async function getUserIdFromUsername(username: string) {

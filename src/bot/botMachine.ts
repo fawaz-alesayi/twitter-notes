@@ -8,7 +8,7 @@ export interface DirectMessage {
   toUserId: string;
 }
 
-let botModel = createModel(
+const botModel = createModel(
   {
     outgoingDirectMessage: {} as DirectMessage,
     incomingDirectMessage: {} as DirectMessage,
@@ -25,7 +25,7 @@ let botModel = createModel(
   }
 );
 
-let messageModel = createModel({
+const messageModel = createModel({
   message: {} as DirectMessage,
   sendDirectMessage: async (directMessage: DirectMessage) => {
     return await sendTwitterDirectMessage(directMessage);
