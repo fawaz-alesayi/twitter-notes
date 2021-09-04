@@ -1,8 +1,8 @@
 -- migrate:up
-create table Notes(
+create table Notes (
     id serial primary key,
-    created_at timestamp NOW(),
-    updated_at timestamp NOW(),
+    created_at timestamp DEFAULT NOW(),
+    updated_at timestamp DEFAULT NOW(),
     note_text text,
     for_twitter_id text
 );
