@@ -13,6 +13,10 @@ server.register(twitterWebHooks, {
   prefix: "/webhook",
 });
 
+server.register(twitterWebHooks, {
+  prefix: "/oauth",
+});
+
 server.register(observer, {
   prefix: "/observer",
 });
