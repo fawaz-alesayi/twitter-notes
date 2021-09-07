@@ -6,6 +6,7 @@ import { getEnv } from "@utils/getEnv";
 import { FromSchema } from "json-schema-to-ts";
 import { onFollow } from '@src/bot/endpoint'
 import { accountActivitySchema } from "@src/bot/schema";
+import fetch from 'node-fetch';
 
 export interface routeOptions {
     prefix: string;
@@ -24,7 +25,7 @@ const twitterOauth: FastifyPluginAsync<routeOptions> = async (
     );
 };
 
-const challengeRequestSchema = {
+const OauthRequestSchema = {
     type: "object",
     properties: {
       crc_token: { type: "string" },
@@ -42,13 +43,13 @@ const challengeRequestSchema = {
   } as const;
   
   const challengeSchema = {
-    query: challengeRequestSchema,
+    query: OauthRequestSchema,
     response: challengeResponseSchema,
   };
 
 const handleOauth = async (
     request: FastifyRequest<{
-        Querystring: FromSchema<typeof challengeRequestSchema>;
+        Querystring: FromSchema<typeof OauthRequestSchema>;
     }>,
     reply: FastifyReply
 ) => {
@@ -61,6 +62,15 @@ const handleOauth = async (
         response_token: `sha256=${challengeSolution}`,
     });
 };
+
+async function getRequestToken() {
+  const response = await fetch('https://api.twitter.com/oauth/request_token', {
+    headers: {
+      'Authorization': 
+    },
+  });
+  const json = await response.json();
+}
 
 
 export default fp(twitterOauth, "3.x");

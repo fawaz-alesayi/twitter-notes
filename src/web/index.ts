@@ -2,6 +2,7 @@ import { interpret } from "xstate";
 import fastify from "fastify";
 import { observerMachine } from "@src/observer/observerMachine";
 import { default as twitterWebHooks } from "@src/twitter/webhooks/route";
+import { default as oauthHook } from '@src/twitter/oauth/index'
 import { getEnv } from "@utils/getEnv";
 import { default as observer } from "@src/observer/endpoint";
 
@@ -13,7 +14,7 @@ server.register(twitterWebHooks, {
   prefix: "/webhook",
 });
 
-server.register(twitterWebHooks, {
+server.register(oauthHook, {
   prefix: "/oauth",
 });
 
