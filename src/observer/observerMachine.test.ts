@@ -13,7 +13,6 @@ describe("Given an newly created observer AND a user", () => {
       })
       
       const observer = interpret(mockObserverMachine).onTransition((state) => {
-        console.log(state.value);
         if (state.matches("observing")) {
           done();
         }

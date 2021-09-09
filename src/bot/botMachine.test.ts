@@ -24,7 +24,6 @@ describe("Given a bot in the 'listeningForDirectMessages' state", () => {
         },
       });
       const bot = interpret(mockBotMachine).onTransition((state) => {
-        console.log(state.value);
         if (state.matches("finish")) {
           done();
         }

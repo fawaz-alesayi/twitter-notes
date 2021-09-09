@@ -36,7 +36,6 @@ export const onFollow = async (
   const bot = interpret(botMachine);
 
   bot.onTransition((state) => {
-    console.info(state.value);
     if (state.matches("finish")) rep.code(HttpStatusCode.NO_CONTENT).send();
     else if (state.matches("error"))
       rep.code(HttpStatusCode.BAD_REQUEST).send();
@@ -59,7 +58,6 @@ async function getUserIdFromUsername(username: string) {
   const reply = await clientV2.get(`users/by/username/${username}`, {
     screen_name: username,
   });
-  console.log(reply);
   return reply.data;
 }
 

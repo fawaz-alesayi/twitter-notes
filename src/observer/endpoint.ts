@@ -35,7 +35,6 @@ const handleObserve = async (
 
   observer.onTransition((state) => {
     if (state.matches("error")) {
-      console.log(state.value);
       const rep = {
         message: `Could not observer user: ${twitterHandle}`,
       };

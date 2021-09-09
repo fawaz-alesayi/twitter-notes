@@ -17,9 +17,7 @@ async function startObserving(user: string) {
         url: `${getEnv("TWITTER_WEBHOOK_CALLBACK_URL")}/webhook/twitter`,
       }
     );
-    console.log(reply);
   } catch (e) {
-    console.error(e);
     throw e;
   }
 }
