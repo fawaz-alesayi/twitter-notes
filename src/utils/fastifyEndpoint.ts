@@ -4,3 +4,7 @@ export interface FastifyEndpoint {
     inputSchema?: any;
     outputSchema? :any;
 }
+
+export interface routeOptions {
+    prefix: string;
+  }

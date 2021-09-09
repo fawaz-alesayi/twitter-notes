@@ -5,15 +5,12 @@ import { getEnv } from "@utils/getEnv";
 import { FromSchema } from "json-schema-to-ts";
 import { onFollow } from '@src/bot/endpoint'
 import { accountActivitySchema } from "@src/bot/schema";
+import { routeOptions } from "@src/utils/fastifyEndpoint";
 
 // using declaration merging, add your plugin props to the appropriate fastify interfaces
 declare module "fastify" {
   interface FastifyRequest {}
   interface FastifyReply {}
-}
-
-export interface routeOptions {
-  prefix: string;
 }
 
 const twitterWebHooks: FastifyPluginAsync<routeOptions> = async (
@@ -65,7 +62,6 @@ const handleChallenge = async (
     request.query.crc_token,
     getEnv("CONSUMER_SECRET")
   );
-  console.log(challengeSolution);
   reply.code(200).send({
     response_token: `sha256=${challengeSolution}`,
   });

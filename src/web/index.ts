@@ -5,6 +5,7 @@ import { default as twitterWebHooks } from "@src/twitter/webhooks/route";
 import { default as oauthHook } from '@src/twitter/oauth/index'
 import { getEnv } from "@utils/getEnv";
 import { default as observer } from "@src/observer/endpoint";
+import register from "@src/register";
 
 export const server = fastify({
   logger: true,
@@ -17,6 +18,10 @@ server.register(twitterWebHooks, {
 server.register(oauthHook, {
   prefix: "/oauth",
 });
+
+server.register(register, {
+  prefix: "/register",
+})
 
 server.register(observer, {
   prefix: "/observer",
