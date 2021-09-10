@@ -1,16 +1,16 @@
 export const observerRequestSchema = {
-  type: "object",
+  type: 'object',
   properties: {
-    user: { type: "string" },
+    user: { type: 'string' },
   },
-  required: ["user"],
+  required: ['user'],
 } as const;
 
 const observerReplySchema = {
   200: {
-    type: "object",
+    type: 'object',
     properties: {
-      message: { type: "string" },
+      message: { type: 'string' },
     },
   },
 } as const;

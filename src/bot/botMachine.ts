@@ -1,6 +1,6 @@
-import { createModel } from "xstate/lib/model";
-import { interpret, createMachine, assign } from "xstate";
-import { botClient } from "../twitter/client";
+import { createModel } from 'xstate/lib/model';
+import { interpret } from 'xstate';
+import { botClient } from '../twitter/client';
 
 export interface DirectMessage {
   text: string;
@@ -20,9 +20,9 @@ const botModel = createModel(
       INCOMING_DIRECT_MESSAGE: (message: DirectMessage) => ({ message }),
       OUTGOING_DIRECT_MESSAGE: (message: DirectMessage) => ({ message }),
       RETRY_DIRECT_MESSAGE: () => ({}),
-      FOLLOW: (user: any) => ({}),
+      FOLLOW: (user: string) => ({}),
     },
-  }
+  },
 );
 
 const messageModel = createModel({
@@ -36,8 +36,8 @@ const messageModel = createModel({
  * This state machine handles sending a message to a user and logging all events that come through it.
  */
 const messageMachine = messageModel.createMachine({
-  id: "message",
-  initial: "sendingDirectMessage",
+  id: 'message',
+  initial: 'sendingDirectMessage',
   context: messageModel.initialContext,
   states: {
     sendingDirectMessage: {
@@ -46,19 +46,19 @@ const messageMachine = messageModel.createMachine({
           context.sendDirectMessage(context.message),
         onDone: {
           // log sucessful message
-          target: "done",
+          target: 'done',
         },
         onError: {
           // log failure here.
-          target: "error",
+          target: 'error',
         },
       },
     },
     done: {
-      type: "final",
+      type: 'final',
     },
     error: {
-      type: "final",
+      type: 'final',
     },
   },
 });
@@ -72,7 +72,7 @@ const messageMachine = messageModel.createMachine({
  * In other words, a new botMachine is created for each incoming HTTP request.
  */
 export const botMachine = botModel.createMachine({
-  initial: "listeningForEvents",
+  initial: 'listeningForEvents',
   context: botModel.initialContext,
   states: {
     listeningForEvents: {
@@ -81,13 +81,13 @@ export const botMachine = botModel.createMachine({
           actions: botModel.assign({
             incomingDirectMessage: (_, event) => event.message,
           }),
-          target: "generatingReply",
+          target: 'generatingReply',
         },
         OUTGOING_DIRECT_MESSAGE: {
           actions: botModel.assign({
             outgoingDirectMessage: (_, event) => event.message,
           }),
-          target: "sendingDirectMessage",
+          target: 'sendingDirectMessage',
         },
       },
     },
@@ -99,12 +99,12 @@ export const botMachine = botModel.createMachine({
             context.generateReply(context.incomingDirectMessage),
         }),
       always: {
-        target: "sendingDirectMessage",
+        target: 'sendingDirectMessage',
       },
     },
     sendingDirectMessage: {
       invoke: {
-        id: "message",
+        id: 'message',
         src: messageMachine,
         data: {
           message: (context: any, _event: any) => context.outgoingDirectMessage,
@@ -112,18 +112,18 @@ export const botMachine = botModel.createMachine({
             context.sendDirectMessage,
         },
         onDone: {
-          target: "finish",
+          target: 'finish',
         },
         onError: {
-          target: "error",
+          target: 'error',
         },
       },
     },
     error: {
-      type: "final",
+      type: 'final',
     },
     finish: {
-      type: "final",
+      type: 'final',
     },
   },
 });
@@ -134,9 +134,9 @@ function generateReply(message: DirectMessage) {
 }
 
 async function sendTwitterDirectMessage(message: DirectMessage) {
-  await botClient.post<object>("direct_messages/events/new", {
+  await botClient.post<Record<string, unknown>>('direct_messages/events/new', {
     event: {
-      type: "message_create",
+      type: 'message_create',
       message_create: {
         target: {
           recipient_id: message.toUserId,

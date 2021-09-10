@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import crypto from 'crypto';
 /**
  * Creates a HMAC SHA-256 hash created from the app TOKEN and
  * your app Consumer Secret.
@@ -7,10 +7,10 @@ import crypto from "crypto";
  */
 export const getChallengeResponse = (
   crc_token: string,
-  consumer_secret: string
+  consumer_secret: string,
 ) => {
   return crypto
-    .createHmac("sha256", consumer_secret)
+    .createHmac('sha256', consumer_secret)
     .update(crc_token)
-    .digest("base64");
+    .digest('base64');
 };

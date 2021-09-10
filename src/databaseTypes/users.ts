@@ -2,7 +2,7 @@
 // Automatically generated. Don't change this file manually.
 // Name: users
 
-export type usersId = number & { " __flavor"?: 'users' };
+export type usersId = number & { ' __flavor'?: 'users' };
 
 export default interface users {
   /**

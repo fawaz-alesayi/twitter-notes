@@ -1,33 +1,30 @@
-import { appClient } from "@src/twitter/client";
-import { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
-import fp from "fastify-plugin";
-import HttpStatusCode from "@src/utils/HttpStatusCodes";
-import { err, ok, Result } from "neverthrow";
-import { routeOptions } from "./registration.test";
+import { appClient } from '@src/twitter/client';
+import { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
+import fp from 'fastify-plugin';
+import HttpStatusCode from '@src/utils/HttpStatusCodes';
+import { err, ok, Result } from 'neverthrow';
+import { routeOptions } from './registration.test';
 
 // /register/twitter
 const register: FastifyPluginAsync<routeOptions> = async (fastify, options) => {
   const { prefix } = options;
   fastify.register(
     async function (fastify) {
-      fastify.get(
-        "/twitter",
-        adaptRegisterRequest
-      );
+      fastify.get('/twitter', adaptRegisterRequest);
     },
-    { prefix }
+    { prefix },
   );
 };
 
 // extracts relevent information from the FastifyRequest
 async function adaptRegisterRequest(
   request: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) {
   const result = await handleRegistration();
   if (result.isOk()) {
     reply.redirect(
-      `https://api.twitter.com/oauth/authorize?oauth_token=${result.value}`
+      `https://api.twitter.com/oauth/authorize?oauth_token=${result.value}`,
     );
     return;
   }
@@ -38,10 +35,10 @@ export const handleRegistration = async (): Promise<
   Result<string, RegistrationError>
 > => {
   try {
-    let requestToken = await appClient.getRequestToken(
-      "https://twitter-notes-dev.up.railway.app/oauth/twitter"
+    const requestToken = await appClient.getRequestToken(
+      'https://twitter-notes-dev.up.railway.app/oauth/twitter',
     );
-    if (requestToken.oauth_callback_confirmed === "true") {
+    if (requestToken.oauth_callback_confirmed === 'true') {
       const oauthRequestToken = requestToken.oauth_token;
       return ok(oauthRequestToken);
     }
@@ -56,4 +53,4 @@ enum RegistrationError {
   COULD_NOT_SEND_REQUEST,
 }
 
-export default fp(register, "3.x");
+export default fp(register, '3.x');

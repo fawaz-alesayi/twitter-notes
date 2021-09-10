@@ -2,7 +2,7 @@
 // Automatically generated. Don't change this file manually.
 // Name: notes
 
-export type notesId = number & { " __flavor"?: 'notes' };
+export type notesId = number & { ' __flavor'?: 'notes' };
 
 export default interface notes {
   /** Primary key. Index: notes_pkey */

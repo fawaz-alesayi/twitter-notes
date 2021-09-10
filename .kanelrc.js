@@ -11,7 +11,7 @@ module.exports = {
   connection: {
     connectionString: process.env.DATABASE_URL,
   },
-  
+
   preDeleteModelFolder: true,
 
   modelHooks: [insertNameComment],

@@ -1,10 +1,10 @@
-import { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
-import fp from "fastify-plugin";
-import { FromSchema } from "json-schema-to-ts";
-import { observerSchema, observerRequestSchema } from "./schema";
-import { interpret } from "xstate";
-import { observer } from "./observerMachine";
-import HttpStatusCode from "@src/utils/HttpStatusCodes";
+import { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
+import fp from 'fastify-plugin';
+import { FromSchema } from 'json-schema-to-ts';
+import { observerSchema, observerRequestSchema } from './schema';
+import { interpret } from 'xstate';
+import { observer } from './observerMachine';
+import HttpStatusCode from '@src/utils/HttpStatusCodes';
 
 export interface routeOptions {
   prefix: string;
@@ -12,34 +12,30 @@ export interface routeOptions {
 
 const observerPlugin: FastifyPluginAsync<routeOptions> = async (
   fastify,
-  options
+  options,
 ) => {
   const { prefix } = options;
   fastify.register(
     async function (fastify) {
-      fastify.post(
-        "/twitter",
-        { schema: observerSchema },
-        handleObserve
-      );
+      fastify.post('/twitter', { schema: observerSchema }, handleObserve);
     },
-    { prefix }
+    { prefix },
   );
 };
 
 const handleObserve = async (
   request: FastifyRequest<{ Body: FromSchema<typeof observerRequestSchema> }>,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   const twitterHandle = request.body.user;
 
   observer.onTransition((state) => {
-    if (state.matches("error")) {
+    if (state.matches('error')) {
       const rep = {
         message: `Could not observer user: ${twitterHandle}`,
       };
       reply.code(HttpStatusCode.BAD_REQUEST).send(rep);
-    } else if (state.matches("observing")) {
+    } else if (state.matches('observing')) {
       const rep = {
         message: `Observing ${state.context.user}...`,
       };
@@ -49,10 +45,10 @@ const handleObserve = async (
 
   observer.start();
   observer.send({
-    type: "OBSERVE_FOLLOWING",
+    type: 'OBSERVE_FOLLOWING',
     user: twitterHandle,
   });
-  await reply
+  await reply;
 };
 
-export default fp(observerPlugin, "3.x");
+export default fp(observerPlugin, '3.x');
