@@ -2,7 +2,6 @@ import { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 import fp from 'fastify-plugin';
 import { FromSchema } from 'json-schema-to-ts';
 import { observerSchema, observerRequestSchema } from './schema';
-import { interpret } from 'xstate';
 import { observer } from './observerMachine';
 import HttpStatusCode from '@src/utils/HttpStatusCodes';
 

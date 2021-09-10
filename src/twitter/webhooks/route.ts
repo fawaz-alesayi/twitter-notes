@@ -7,12 +7,6 @@ import { onFollow } from '@src/bot/endpoint';
 import { accountActivitySchema } from '@src/bot/schema';
 import { routeOptions } from '@src/utils/fastifyEndpoint';
 
-// using declaration merging, add your plugin props to the appropriate fastify interfaces
-declare module 'fastify' {
-  interface FastifyRequest {}
-  interface FastifyReply {}
-}
-
 const twitterWebHooks: FastifyPluginAsync<routeOptions> = async (
   fastify,
   options,

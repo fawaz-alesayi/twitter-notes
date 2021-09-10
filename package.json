@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "start": "ts-node -r tsconfig-paths/register src/web/index.ts",
-    "lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
+    "style": "prettier --check --plugin-search-dir=. .",
+    "lint": "eslint --ignore-path .gitignore .",
     "format": "prettier --write --plugin-search-dir=. .",
     "prepare": "husky install"
   },

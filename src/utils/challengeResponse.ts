@@ -8,7 +8,7 @@ import crypto from 'crypto';
 export const getChallengeResponse = (
   crc_token: string,
   consumer_secret: string,
-) => {
+): string => {
   return crypto
     .createHmac('sha256', consumer_secret)
     .update(crc_token)

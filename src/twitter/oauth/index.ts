@@ -5,7 +5,8 @@ import { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 import fp from 'fastify-plugin';
 import { FromSchema } from 'json-schema-to-ts';
 import { err, ok, Result } from 'neverthrow';
-import { appClient } from '../client';
+import { appClient } from '@src/twitter/client';
+import HttpStatusCode from '@src/utils/HttpStatusCodes';
 
 const twitterOauth: FastifyPluginAsync<routeOptions> = async (
   fastify,
@@ -50,7 +51,23 @@ const handleCallbackRedirect = async (
     Querystring: FromSchema<typeof OauthRequestSchema>;
   }>,
   reply: FastifyReply,
-) => {};
+) => {
+  (
+    await saveUserAccessToken(
+      request.query.oauth_token,
+      request.query.oauth_verifier,
+    )
+  ).match(
+    // ok
+    () => {
+      reply.status(HttpStatusCode.OK).send();
+    },
+    // err
+    () => {
+      reply.status(HttpStatusCode.BAD_REQUEST).send();
+    },
+  );
+};
 
 export const saveUserAccessToken = async (
   oauthToken: string,

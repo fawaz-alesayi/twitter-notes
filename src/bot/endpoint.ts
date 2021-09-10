@@ -1,5 +1,3 @@
-import { clientV2 } from '@src/twitter/client';
-import { FastifyEndpoint } from '@src/utils/fastifyEndpoint';
 import HttpStatusCode from '@src/utils/HttpStatusCodes';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import { FromSchema } from 'json-schema-to-ts';
@@ -13,7 +11,7 @@ export const onFollow = async (
     Body: FromSchema<typeof accountActivityRequestSchema>;
   }>,
   rep: FastifyReply,
-) => {
+): Promise<FastifyReply> => {
   req.log.info('Recieved a follow');
 
   const followEvents = req.body.follow_events as {
@@ -53,15 +51,3 @@ export const onFollow = async (
   });
   return rep;
 };
-
-async function getUserIdFromUsername(username: string) {
-  const reply = await clientV2.get(`users/by/username/${username}`, {
-    screen_name: username,
-  });
-  return reply.data;
-}
-
-// const endpoint: FastifyEndpoint = {
-//     handler: onAccountActivity,
-//     inputSchema: accountActivityRequestSchema,
-// }

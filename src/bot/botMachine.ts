@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createModel } from 'xstate/lib/model';
 import { interpret } from 'xstate';
 import { botClient } from '../twitter/client';
@@ -42,7 +43,7 @@ const messageMachine = messageModel.createMachine({
   states: {
     sendingDirectMessage: {
       invoke: {
-        src: async (context, _: any) =>
+        src: async (context) =>
           context.sendDirectMessage(context.message),
         onDone: {
           // log sucessful message
@@ -107,7 +108,9 @@ export const botMachine = botModel.createMachine({
         id: 'message',
         src: messageMachine,
         data: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           message: (context: any, _event: any) => context.outgoingDirectMessage,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           sendDirectMessage: (context: any, _event: any) =>
             context.sendDirectMessage,
         },

@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createModel } from 'xstate/lib/model';
-import { assign, interpret, createMachine } from 'xstate';
-import { botClient, createUserClient } from '@src/twitter/client';
+import { assign, interpret } from 'xstate';
+import { createUserClient } from '@src/twitter/client';
 import { getEnv } from '@utils/getEnv';
 import { ErrorPlatformEvent } from 'xstate';
 import HttpStatusCode from '@src/utils/HttpStatusCodes';
@@ -8,16 +10,13 @@ import HttpStatusCode from '@src/utils/HttpStatusCodes';
 export const observingList: string[] = ['806117763328708609'];
 
 async function startObserving(user: string) {
-  try {
-    const reply = await botClient.post(
-      `account_activity/all/${getEnv('TWITTER_ENV')}/webhooks`,
-      {
-        url: `${getEnv('TWITTER_WEBHOOK_CALLBACK_URL')}/webhook/twitter`,
-      },
-    );
-  } catch (e) {
-    throw e;
-  }
+  const client = createUserClient(user)
+  await client.post(
+    `account_activity/all/${getEnv('TWITTER_ENV')}/webhooks`,
+    {
+      url: `${getEnv('TWITTER_WEBHOOK_CALLBACK_URL')}/webhook/twitter`,
+    },
+  );
 }
 
 /**
@@ -52,25 +51,7 @@ const userObserverModel = createModel(
   },
 );
 
-const observingFollowingMachine = createMachine({
-  id: 'following',
-  states: {
-    idle: {},
-    observingUser: {},
-    stopped: {},
-    failed: {},
-  },
-});
 
-const observingDirectMessagesMachine = createMachine({
-  id: 'observingDirectMessages',
-  context: {
-    user: '',
-  },
-  states: {
-    observingUserDirectMessages: {},
-  },
-});
 /**
  * Observes the user's following and interactions with other users.
  * Has the same lifetime as the NodeJS process.

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { observerMachine } from './observerMachine';
 
 import { interpret } from 'xstate';
@@ -6,7 +7,9 @@ describe('Given an newly created observer AND a user', () => {
     const user = 'fawaztsa';
     it('should eventually observe the user', (done) => {
       const mockObserverMachine = observerMachine.withContext({
-        startObserving: async (user: string) => {},
+        startObserving: async (user: string) => {
+          return;
+        },
         user,
         error: '',
         isObserving: async () => false,

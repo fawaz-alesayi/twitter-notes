@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FastifyRequest, FastifyReply } from 'fastify';
 export interface FastifyEndpoint {
   handler: (
