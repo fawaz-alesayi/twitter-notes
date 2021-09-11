@@ -85,7 +85,7 @@ export const saveUserAccessToken = async (
 
     console.log(`${accessToken.user_id} has his oauth token: ${accessToken.oauth_token}`);
 
-    supabase.from<users>('users').insert(
+    await supabase.from<users>('users').insert(
       [
         {
           oauth_secret: accessToken.oauth_token_secret,
