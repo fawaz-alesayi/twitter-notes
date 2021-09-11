@@ -42,7 +42,7 @@ const OauthResponseSchema = {
   400: {
     type: 'object',
     properties: {},
-  }
+  },
 } as const;
 
 const OauthTwitterSchema = {
@@ -83,17 +83,22 @@ export const saveUserAccessToken = async (
       oauth_verifier: oauthVerifier,
     });
 
+    console.log(`${accessToken.user_id} has his oauth token: ${accessToken.oauth_token}`);
+
     supabase.from<users>('users').insert(
-      {
-        oauth_secret: accessToken.oauth_token_secret,
-        oauth_token: accessToken.oauth_token,
-        twitter_id: accessToken.user_id,
-      },
+      [
+        {
+          oauth_secret: accessToken.oauth_token_secret,
+          oauth_token: accessToken.oauth_token,
+          twitter_id: accessToken.user_id,
+        },
+      ],
       { returning: 'minimal' },
     );
 
     return ok(null);
   } catch (error) {
+    console.error(error);
     return err(null);
   }
 };
