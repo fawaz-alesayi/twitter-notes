@@ -34,16 +34,20 @@ const OauthRequestSchema = {
   required: ['oauth_token', 'oauth_verifier'],
 } as const;
 
-const challengeResponseSchema = {
+const OauthResponseSchema = {
   200: {
     type: 'object',
     properties: {},
   },
+  400: {
+    type: 'object',
+    properties: {},
+  }
 } as const;
 
 const OauthTwitterSchema = {
   query: OauthRequestSchema,
-  response: challengeResponseSchema,
+  response: OauthResponseSchema,
 };
 
 const handleCallbackRedirect = async (
