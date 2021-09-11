@@ -43,10 +43,11 @@ railway link
 
 ### Environment Variables
 
-To get development environment variables
+To run a command with the environment variables set
 
 ```
-
+railway run "your command here"
+railway run "pnpm start"
 ```
 
 ### Deployment
