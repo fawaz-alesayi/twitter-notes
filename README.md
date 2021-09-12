@@ -55,3 +55,5 @@ railway run "pnpm start"
 ```
 "railway up" - to deploy the application to production
 ```
+
+Pushing a commit will also trigger a deployment.
