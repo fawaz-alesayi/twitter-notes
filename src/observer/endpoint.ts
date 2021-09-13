@@ -4,10 +4,7 @@ import { FromSchema } from 'json-schema-to-ts';
 import { observerSchema, observerRequestSchema } from './schema';
 import { observer } from './observerMachine';
 import HttpStatusCode from '@src/utils/HttpStatusCodes';
-
-export interface routeOptions {
-  prefix: string;
-}
+import { routeOptions } from '@src/utils/fastifyEndpoint';
 
 const observerPlugin: FastifyPluginAsync<routeOptions> = async (
   fastify,

@@ -92,7 +92,7 @@ export const botMachine = botModel.createMachine({
         },
       },
     },
-    parseDirectMessage: {},
+    savingFollowRequest: {},
     generatingReply: {
       entry: (_context) =>
         botModel.assign({

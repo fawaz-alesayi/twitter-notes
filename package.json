@@ -1,7 +1,7 @@
 {
   "name": "twitter-notes",
   "version": "0.1.0",
-  "description": "A tool to monitor Twitter account Followings",
+  "description": "A tool to manage social media following better.",
   "main": "src/web/index.js",
   "scripts": {
     "test": "jest",
