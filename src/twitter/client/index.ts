@@ -1,5 +1,8 @@
 import Twitter from 'twitter-lite';
 import { getEnv } from '@src/utils/getEnv';
+import { supabase } from '@src/utils/dataClient';
+import { users } from '@src/databaseTypes';
+import { Result, ok } from 'neverthrow';
 export const botClient = new Twitter({
   subdomain: 'api', // "api" is the default (change for other subdomains)
   version: '1.1', // version "1.1" is the default (change for other subdomains)
@@ -9,16 +12,30 @@ export const botClient = new Twitter({
   access_token_secret: getEnv('ACCESS_TOKEN_SECRET'), // from your User (oauth_token_secret)
 });
 
-export const createUserClient = (user: string): Twitter => {
-  const userTokens: UserTokens = getUserTokens(user);
-  return new Twitter({
-    subdomain: 'api', // "api" is the default (change for other subdomains)
-    version: '1.1', // version "1.1" is the default (change for other subdomains)
-    consumer_key: getEnv('CONSUMER_KEY'),
-    consumer_secret: getEnv('CONSUMER_SECRET'),
-    access_token_key: userTokens.oauth_token,
-    access_token_secret: userTokens.oauth_token_secret, // from your User (oauth_token_secret)
-  });
+export const createUserClient = async (
+  user: string,
+): Promise<Twitter> => {
+  const result = await getUserTokens(user);
+  const userClient = result.match(
+    // ok
+    (userTokens) => {
+      return ok(
+        new Twitter({
+          subdomain: 'api', // "api" is the default (change for other subdomains)
+          version: '1.1', // version "1.1" is the default (change for other subdomains)
+          consumer_key: getEnv('CONSUMER_KEY'),
+          consumer_secret: getEnv('CONSUMER_SECRET'),
+          access_token_key: userTokens.oauth_token,
+          access_token_secret: userTokens.oauth_token_secret, // from your User (oauth_token_secret)
+        }),
+      );
+    },
+    // err
+    (err) => {
+      throw new Error(err);
+    },
+  );
+  return userClient.value;
 };
 
 interface UserTokens {
@@ -43,9 +60,34 @@ export const clientV2 = new Twitter({
   access_token_secret: getEnv('ACCESS_TOKEN_SECRET'), // from your User (oauth_token_secret)
 });
 
-function getUserTokens(user: string): UserTokens {
-  return {
-    oauth_token: getEnv(`${user}_ACCESS_TOKEN_KEY`),
-    oauth_token_secret: getEnv(`${user}_ACCESS_TOKEN_SECRET`),
-  };
+async function getUserTokens(
+  twitter_id: string,
+): Promise<Result<UserTokens, string>> {
+  const { data, error } = await supabase
+    .from<users>('users')
+    .select('oauth_token,oauth_token_secret')
+    .eq('twitter_id', twitter_id);
+
+  // if (error) return err(error.message);
+
+  // if (!data || data.length === 0) return err('User not found');
+
+  // if (data[0].oauth_token === null || data[0].oauth_secret === null) {
+  //   return err('Users does not have oauth_token or oauth_secret');
+  // }
+
+  if (
+    error ||
+    !data ||
+    data[0] === null ||
+    data[0].oauth_token === null ||
+    data[0].oauth_secret === null ||
+    data.length === 0
+  )
+    throw new Error('User not found');
+
+  return ok({
+    oauth_token: getEnv(data[0].oauth_token),
+    oauth_token_secret: getEnv(data[0].oauth_secret),
+  });
 }

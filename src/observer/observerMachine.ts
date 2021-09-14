@@ -7,10 +7,10 @@ import { getEnv } from '@utils/getEnv';
 import { ErrorPlatformEvent } from 'xstate';
 import HttpStatusCode from '@src/utils/HttpStatusCodes';
 
-export const observingList: string[] = ['806117763328708609'];
+export const observingList: string[] = ['806117763328708609', '244002500'];
 
 async function startObserving(user: string) {
-  const client = createUserClient(user)
+  const client = await createUserClient(user)
   await client.post(
     `account_activity/all/${getEnv('TWITTER_ENV')}/webhooks`,
     {
@@ -24,7 +24,7 @@ async function startObserving(user: string) {
  * @param user a twitter handle to the user
  */
 async function isObserving(user: string) {
-  const client = createUserClient(user);
+  const client = await createUserClient(user);
   const reply = await client.get<Response>(
     `account_activity/all/${getEnv('TWITTER_ENV')}/subscriptions`,
   );
