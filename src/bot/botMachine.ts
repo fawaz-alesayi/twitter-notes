@@ -94,7 +94,7 @@ export const botMachine = botModel.createMachine({
     },
     savingFollowRequest: {},
     generatingReply: {
-      entry: (_context) =>
+      entry: (_context: unknown) =>
         botModel.assign({
           outgoingDirectMessage: (context, _) =>
             context.generateReply(context.incomingDirectMessage),
