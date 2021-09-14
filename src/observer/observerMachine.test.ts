@@ -7,10 +7,10 @@ describe('Given an newly created observer AND a user', () => {
     const user = 'fawaztsa';
     it('should eventually observe the user', (done) => {
       const mockObserverMachine = observerMachine.withContext({
-        startObserving: async (user: string) => {
+        startObserving: async (handles: string[]) => {
           return;
         },
-        user,
+        twitterHandles: [user],
         error: '',
         isObserving: async () => false,
       });
@@ -22,7 +22,7 @@ describe('Given an newly created observer AND a user', () => {
       });
 
       observer.start();
-      observer.send({ type: 'OBSERVE_FOLLOWING', user: user });
+      observer.send({ type: 'OBSERVE_FOLLOWING', twitterHandles: [user] });
     });
   });
 });

@@ -9,22 +9,24 @@ import HttpStatusCode from '@src/utils/HttpStatusCodes';
 
 export const observingList: string[] = ['806117763328708609', '244002500'];
 
-async function startObserving(user: string) {
-  const client = await createUserClient(user)
-  await client.post(
-    `account_activity/all/${getEnv('TWITTER_ENV')}/webhooks`,
-    {
-      url: `${getEnv('TWITTER_WEBHOOK_CALLBACK_URL')}/webhook/twitter`,
-    },
-  );
+async function startObserving(twitterHandles: string[]) {
+  twitterHandles.forEach(async (twitterHandle) => {
+    const client = await createUserClient(twitterHandle);
+    await client.post(
+      `account_activity/all/${getEnv('TWITTER_ENV')}/webhooks`,
+      {
+        url: `${getEnv('TWITTER_WEBHOOK_CALLBACK_URL')}/webhook/twitter`,
+      },
+    );
+  });
 }
 
 /**
- * checks if the user followings are being observed
- * @param user a twitter handle to the user
+ * checks if the twitterHandles followings are being observed
+ * @param twitterHandles a twitter handle to the twitterHandles
  */
-async function isObserving(user: string) {
-  const client = await createUserClient(user);
+async function isObserving(twitterHandles: string) {
+  const client = await createUserClient(twitterHandles);
   const reply = await client.get<Response>(
     `account_activity/all/${getEnv('TWITTER_ENV')}/subscriptions`,
   );
@@ -34,26 +36,25 @@ async function isObserving(user: string) {
 
 const userObserverModel = createModel(
   {
-    user: '' as string,
+    twitterHandles: [] as string[],
     error: '' as string,
-    startObserving: async (user: string) => {
-      return await startObserving(user);
+    startObserving: async (twitterHandles: string[]) => {
+      return await startObserving(twitterHandles);
     },
-    isObserving: async (user: string) => {
-      return await isObserving(user);
+    isObserving: async (twitterHandle: string) => {
+      return await isObserving(twitterHandle);
     },
   },
   {
     events: {
-      OBSERVE_FOLLOWING: (user: string) => ({ user }),
+      OBSERVE_FOLLOWING: (twitterHandles: string[]) => ({ twitterHandles }),
       RETRY: () => ({}),
     },
   },
 );
 
-
 /**
- * Observes the user's following and interactions with other users.
+ * Observes the twitterHandles's following and interactions with other twitterHandles.
  * Has the same lifetime as the NodeJS process.
  */
 export const observerMachine = userObserverModel.createMachine({
@@ -65,48 +66,40 @@ export const observerMachine = userObserverModel.createMachine({
         OBSERVE_FOLLOWING: {
           target: 'initiateObserving',
           actions: userObserverModel.assign({
-            user: (_, event) => event.user,
+            twitterHandles: (_, event) => event.twitterHandles,
           }),
-        },
-      },
-    },
-    checkObserving: {
-      invoke: {
-        src: async (context, _) => await context.isObserving(context.user),
-        onDone: {
-          target: 'observing',
-        },
-        onError: {
-          target: 'error',
         },
       },
     },
     initiateObserving: {
       invoke: {
-        src: async (context, _) => await context.startObserving(context.user),
+        src: async (context, _) =>
+          await context.startObserving(context.twitterHandles),
         onDone: {
           target: 'observing',
         },
         onError: {
-          target: 'error',
+          target: 'observing',
           actions: assign({
             error: (context, _event: any) => {
               const event: ErrorPlatformEvent = _event;
-              return `Error while observing ${context.user}. Error Message: ${event.data}`;
+              return `Error while observing ${context.twitterHandles}. Error Message: ${event.data}`;
             },
           }),
         },
       },
     },
-    observing: {},
-    stopObserving: {},
-    error: {
+    observing: {
       on: {
-        RETRY: {
-          target: 'checkObserving',
+        OBSERVE_FOLLOWING: {
+          target: 'initiateObserving',
+          actions: userObserverModel.assign({
+            twitterHandles: (_, event) => event.twitterHandles,
+          }),
         },
       },
     },
+    stopObserving: {},
   },
 });
 

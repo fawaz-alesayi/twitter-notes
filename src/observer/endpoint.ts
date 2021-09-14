@@ -33,16 +33,17 @@ const handleObserve = async (
       reply.code(HttpStatusCode.BAD_REQUEST).send(rep);
     } else if (state.matches('observing')) {
       const rep = {
-        message: `Observing ${state.context.user}...`,
+        message: `Observing ${state.context.twitterHandles}...`,
       };
       reply.code(HttpStatusCode.OK).send(rep);
     }
   });
 
+
   observer.start();
   observer.send({
     type: 'OBSERVE_FOLLOWING',
-    user: twitterHandle,
+    twitterHandles: [twitterHandle],
   });
   await reply;
 };
