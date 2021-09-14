@@ -13,9 +13,9 @@ export const botClient = new Twitter({
 });
 
 export const createUserClient = async (
-  user: string,
+  twitterHandle: string,
 ): Promise<Twitter> => {
-  const result = await getUserTokens(user);
+  const result = await getUserTokens(twitterHandle);
   const userClient = result.match(
     // ok
     (userTokens) => {
@@ -61,12 +61,12 @@ export const clientV2 = new Twitter({
 });
 
 async function getUserTokens(
-  twitter_id: string,
+  twitterHandle: string,
 ): Promise<Result<UserTokens, string>> {
   const { data, error } = await supabase
     .from<users>('users')
     .select('oauth_token,oauth_token_secret')
-    .eq('twitter_id', twitter_id);
+    .eq('twitter_handle', twitterHandle);
 
   // if (error) return err(error.message);
 
@@ -87,7 +87,7 @@ async function getUserTokens(
     throw new Error('User not found');
 
   return ok({
-    oauth_token: getEnv(data[0].oauth_token),
-    oauth_token_secret: getEnv(data[0].oauth_secret),
+    oauth_token: data[0].oauth_token,
+    oauth_token_secret: data[0].oauth_secret
   });
 }
