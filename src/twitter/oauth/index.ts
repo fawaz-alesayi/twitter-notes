@@ -91,6 +91,7 @@ export const saveUserAccessToken = async (
           oauth_secret: accessToken.oauth_token_secret,
           oauth_token: accessToken.oauth_token,
           twitter_id: accessToken.user_id,
+          twitter_handle: accessToken.screen_name
         },
       ],
       { returning: 'minimal' },

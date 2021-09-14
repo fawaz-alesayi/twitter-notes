@@ -2,7 +2,7 @@
 // Automatically generated. Don't change this file manually.
 // Name: users
 
-export type usersId = number & { ' __flavor'?: 'users' };
+export type usersId = number & { " __flavor"?: 'users' };
 
 export default interface users {
   /**
@@ -17,6 +17,8 @@ export default interface users {
   oauth_token: string | null;
 
   oauth_secret: string | null;
+
+  twitter_handle: string | null;
 }
 
 export interface usersInitializer {
@@ -33,4 +35,6 @@ export interface usersInitializer {
   oauth_token?: string | null;
 
   oauth_secret?: string | null;
+
+  twitter_handle?: string | null;
 }

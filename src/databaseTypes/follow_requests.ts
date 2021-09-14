@@ -4,7 +4,7 @@
 
 import { usersId } from './users';
 
-export type follow_requestsId = number & { ' __flavor'?: 'follow_requests' };
+export type follow_requestsId = number & { " __flavor"?: 'follow_requests' };
 
 export default interface follow_requests {
   /** Primary key. Index: follow_requests_pkey */
