@@ -9,7 +9,7 @@ export const botClient = new Twitter({
   consumer_key: getEnv('CONSUMER_KEY'),
   consumer_secret: getEnv('CONSUMER_SECRET'),
   access_token_key: getEnv('ACCESS_TOKEN_KEY'),
-  access_token_secret: getEnv('ACCESS_TOKEN_SECRET'), // from your User (oauth_token_secret)
+  access_token_secret: getEnv('ACCESS_TOKEN_SECRET'),
 });
 
 export const createUserClient = async (
@@ -39,7 +39,7 @@ export const appClient = new Twitter({
   consumer_secret: getEnv('CONSUMER_SECRET'),
 });
 
-export const clientV2 = new Twitter({
+export const botClientV2 = new Twitter({
   subdomain: 'api', // "api" is the default (change for other subdomains)
   version: '2', // version "1.1" is the default (change for other subdomains)
   extension: false,
@@ -62,8 +62,11 @@ async function getUserTokens(
   if (!data || data.length === 0) return err('User not found');
 
   if (data[0].oauth_token === null || data[0].oauth_secret === null) {
-    throw err('Users does not have oauth_token or oauth_secret');
+    return err('Users does not have oauth_token or oauth_secret');
   }
+
+  console.log(data);
+  console.log(data[0]);
 
   return ok({
     oauth_token: data[0].oauth_token,
