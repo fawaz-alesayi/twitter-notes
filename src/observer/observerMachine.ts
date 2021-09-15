@@ -4,12 +4,11 @@ import { createModel } from 'xstate/lib/model';
 import { assign, interpret } from 'xstate';
 import { createUserClient } from '@src/twitter/client';
 import { getEnv } from '@utils/getEnv';
-import { ErrorPlatformEvent } from 'xstate';
-import HttpStatusCode from '@src/utils/HttpStatusCodes';
+import { ErrorPlatformEvent } from 'xstate';;
 
 export const observingList: string[] = ['806117763328708609', '244002500'];
 
-async function startObserving(twitterHandles: string[]) {
+async function startObserving(twitterHandles: string[]): Promise<void> {
   twitterHandles.forEach(async (twitterHandle) => {
     const client = await createUserClient(twitterHandle);
     await client.post(
@@ -17,21 +16,24 @@ async function startObserving(twitterHandles: string[]) {
       {
         url: `${getEnv('TWITTER_WEBHOOK_CALLBACK_URL')}/webhook/twitter`,
       },
-    );
-  });
-}
+    )
 
-/**
- * checks if the twitterHandles followings are being observed
- * @param twitterHandles a twitter handle to the twitterHandles
- */
-async function isObserving(twitterHandles: string) {
-  const client = await createUserClient(twitterHandles);
-  const reply = await client.get<Response>(
-    `account_activity/all/${getEnv('TWITTER_ENV')}/subscriptions`,
-  );
-  if (reply.status === HttpStatusCode.NO_CONTENT) return true;
-  return false;
+    // client.match(
+    //   async (client: Twitter) => {
+    //     await client.post(
+    //       `account_activity/all/${getEnv('TWITTER_ENV')}/webhooks`,
+    //       {
+    //         url: `${getEnv('TWITTER_WEBHOOK_CALLBACK_URL')}/webhook/twitter`,
+    //       },
+    //     )
+    //     return `Sent a request to account activity API successfully`;
+    //   },
+    //   async (err: string) => {
+    //     console.info(err)
+    //     return err;
+    //   },
+    // );
+  });
 }
 
 const userObserverModel = createModel(
@@ -40,9 +42,6 @@ const userObserverModel = createModel(
     error: '' as string,
     startObserving: async (twitterHandles: string[]) => {
       return await startObserving(twitterHandles);
-    },
-    isObserving: async (twitterHandle: string) => {
-      return await isObserving(twitterHandle);
     },
   },
   {

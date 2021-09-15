@@ -12,7 +12,6 @@ describe('Given an newly created observer AND a user', () => {
         },
         twitterHandles: [user],
         error: '',
-        isObserving: async () => false,
       });
 
       const observer = interpret(mockObserverMachine).onTransition((state) => {
