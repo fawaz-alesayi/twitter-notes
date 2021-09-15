@@ -65,26 +65,16 @@ async function getUserTokens(
 ): Promise<Result<UserTokens, string>> {
   const { data, error } = await supabase
     .from<users>('users')
-    .select('oauth_token,oauth_token_secret')
+    .select('oauth_token,oauth_secret')
     .eq('twitter_handle', twitterHandle);
 
-  // if (error) return err(error.message);
+  if (error) throw new Error(error.message);
 
-  // if (!data || data.length === 0) return err('User not found');
+  if (!data || data.length === 0) throw new Error('User not found');
 
-  // if (data[0].oauth_token === null || data[0].oauth_secret === null) {
-  //   return err('Users does not have oauth_token or oauth_secret');
-  // }
-
-  if (
-    error ||
-    !data ||
-    data[0] === null ||
-    data[0].oauth_token === null ||
-    data[0].oauth_secret === null ||
-    data.length === 0
-  )
-    throw new Error('User not found');
+  if (data[0].oauth_token === null || data[0].oauth_secret === null) {
+    throw new Error('Users does not have oauth_token or oauth_secret');
+  }
 
   return ok({
     oauth_token: data[0].oauth_token,
