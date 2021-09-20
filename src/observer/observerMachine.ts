@@ -5,6 +5,8 @@ import { assign, interpret } from 'xstate';
 import { createUserClient } from '@src/twitter/client';
 import { getEnv } from '@utils/getEnv';
 import { ErrorPlatformEvent } from 'xstate';
+import { follow_requests } from '@src/databaseTypes';
+import { supabase } from '@src/utils/dataClient';
 
 export const observingList: string[] = ['806117763328708609', '244002500'];
 
@@ -102,5 +104,13 @@ export const observerMachine = userObserverModel.createMachine({
     stopObserving: {},
   },
 });
+
+async function saveFollowRequest(userid: number, toTwitterId: string) {
+  await supabase.from<follow_requests>('follow_requests').insert({
+    to_twitter_id: toTwitterId,
+    user_id: userid,
+  })
+}
+
 
 export const observer = interpret(observerMachine);
