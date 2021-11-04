@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createModel } from 'xstate/lib/model';
-import { assign, interpret } from 'xstate';
+import { ActorRef, assign, createMachine, interpret, spawn } from 'xstate';
 import { createUserClient } from '@src/twitter/client';
 import { getEnv } from '@utils/getEnv';
 import { ErrorPlatformEvent } from 'xstate';
@@ -56,8 +56,7 @@ const userObserverModel = createModel(
 );
 
 /**
- * Observes the twitterHandles's following and interactions with other twitterHandles.
- * Has the same lifetime as the NodeJS process.
+ * Observes one twitterHandles's following and interactions with other twitterHandles.
  */
 export const observerMachine = userObserverModel.createMachine({
   context: userObserverModel.initialContext,
@@ -104,6 +103,45 @@ export const observerMachine = userObserverModel.createMachine({
     stopObserving: {},
   },
 });
+
+const globalObserverModel = createModel(
+  {
+    observers: []
+  },
+  {
+    events: {
+      OBSERVE_FOLLOWING: (twitterHandles: string[]) => ({ twitterHandles }),
+    },
+  },
+);
+
+// Observes all users by spawning an observerMachine for each user
+// Has the same lifetime as the NodeJS process.
+const globalObeserver = globalObserverModel.createMachine({
+  context: {
+    observers: [] as ActorRef<any>[],
+  },
+  initial: 'idle',
+  states: {
+    idle: {},
+    syncingState: {},
+    ready: {
+      on: {
+        OBSERVE_FOLLOWING: {
+          actions: globalObserverModel.assign({
+            observers: (context, event) => {
+              const ref = spawn(observerMachine, `observer-${event.twitterHandles[0]}`)
+              return [
+                ...context.observers,
+                ref,
+              ]
+            },
+          })
+        }
+      }
+    },
+  }
+})
 
 async function saveFollowRequest(userid: number, toTwitterId: string) {
   await supabase.from<follow_requests>('follow_requests').insert({
