@@ -106,7 +106,7 @@ export const observerMachine = userObserverModel.createMachine({
 
 const globalObserverModel = createModel(
   {
-    observers: []
+    observers: [] as ActorRef<any>[]
   },
   {
     events: {
