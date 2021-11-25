@@ -7,6 +7,7 @@ import { getEnv } from '@utils/getEnv';
 import { ErrorPlatformEvent } from 'xstate';
 import { follow_requests } from '@src/databaseTypes';
 import { supabase } from '@src/utils/dataClient';
+import { followRequestDataStore } from '@src/repositories/followRequests/followRequestRepository';
 
 export const observingList: string[] = ['806117763328708609', '244002500'];
 
@@ -144,9 +145,9 @@ const globalObeserver = globalObserverModel.createMachine({
 })
 
 async function saveFollowRequest(userid: number, toTwitterId: string) {
-  await supabase.from<follow_requests>('follow_requests').insert({
-    to_twitter_id: toTwitterId,
+  await followRequestDataStore.storeFollowRequest({
     user_id: userid,
+    to_twitter_id: toTwitterId
   })
 }
 
