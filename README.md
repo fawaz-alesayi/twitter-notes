@@ -1,3 +1,6 @@
+# Archive Note
+Twitter Notes was a twitter bot that offered you to write a note on why you follwoed someone. it is dead now.
+
 # twitter-notes (name not determined yet)
 
 ## Installation & Configuration
